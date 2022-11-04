@@ -1,0 +1,153 @@
+package servidorSocket;
+/**
+ * Creamos el proyecto PersistenciaTransaccional
+ * Creamosel paquete o package servidorSocket
+ * Creamos la clase Servidor01
+ * se importan estas librerias.swing y .awt en la cual  vienen los layouts.para la interfaz grafica
+ * imporaremos .net y .io para los para la los sockets y la transmisión de cadenas o mensajes entre ellos mismos
+ * clases como la buffer y de la white air que nos va a servir para poder recibir y enviar mensajes y vamos a utilizar
+ * .net.event para el manejo de eventos consumo en este caso va a ser el botón.
+*/
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.*;
+import java.io.*;
+import java.awt.event.*;
+
+
+public class Servidor01 {
+	/**
+	 * en esta parte declaramos todos los objetos que vamos a utilizar
+	 */
+	JFrame ventana_chat=null; 
+	JButton btn_enviar=null;  //bpoton para enviar
+	JTextField txt_mensaje=null; //donde escribimos el mensaje que vamos a enviar
+	JTextArea area_chat =null; //donde recibimos el mensaje
+	JPanel contenedor_areachat=null; 
+	JPanel contenedor_btntxt = null;
+	JScrollPane scroll = null;
+	ServerSocket Servidor01 = null;
+	Socket socket = null;
+	BufferedReader lector =null;
+	PrintWriter escritor = null;
+	
+	 public Servidor01() { //construimos el constructor y hacemos referencia a nuestro metodo hacerInterfaz
+		 hacerInterfaz();
+	 }
+	 
+	
+	public void hacerInterfaz(){ //metodo
+ 
+	//objetos con sus constructores para construir la interfaz	
+		ventana_chat=new JFrame("Servidor01"); 
+		btn_enviar = new JButton("Enviar");
+		txt_mensaje = new JTextField(4); 
+		area_chat = new JTextArea(10,12); 
+		scroll = new JScrollPane(area_chat);
+		contenedor_areachat = new JPanel();
+		contenedor_areachat=new JPanel(); 
+		contenedor_areachat.setLayout(new GridLayout(1,1)); 
+		contenedor_areachat.add(scroll);
+		contenedor_btntxt=new JPanel();
+		contenedor_btntxt.setLayout(new GridLayout(1,2));
+        contenedor_btntxt.add(txt_mensaje);
+        contenedor_btntxt.add(btn_enviar); 
+        ventana_chat.setLayout(new BorderLayout());
+        ventana_chat.add(contenedor_areachat, BorderLayout.NORTH);
+        ventana_chat.add(contenedor_btntxt, BorderLayout.SOUTH); 
+        ventana_chat.setSize(300, 230);
+        ventana_chat.setVisible(true);
+        ventana_chat.setResizable(false);
+        ventana_chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        
+        
+        Thread principal = new Thread(new Runnable() {
+			public void run() {                           // metodo abstracto
+				try {
+					 Servidor01 = new ServerSocket(9000);
+					while(true) {
+						socket = Servidor01.accept();
+					    leer();
+						escribir();
+					}
+				} catch (IOException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+		    }
+		});
+		principal.start();
+		}
+		
+		
+	protected static Socket accept() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+/**
+ * construimos el metodo leer  obviamente nos va a permitir leer todos los mensajes que nos
+ *lleguen a nosotros ok entonces vamos a hacer un try catch porque vamos a trabajar con clases que posiblemente lancen alguna excepción. 
+ *Dentro del try catch vamos a utilizar una clase llamada buffer reader y declaramos objeto como serverSocket, socket,BufferedReader
+ */
+
+	public void leer(){ 
+		
+			Thread leer_hilo = new Thread(new Runnable() { // hilo
+				public void run() {
+					try {
+						
+						lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));  //objeto con su constructor para leer los mensajes
+						while(true) {                                                                 //ciclo infinito
+							String mensaje_recibido = lector.readLine();
+							area_chat.append("Servidor01 dice:"+mensaje_recibido+"\n");
+						}
+				}catch(Exception ex) {
+					ex.printStackTrace();
+					
+				    }
+			 }
+		});		
+		leer_hilo.start();
+	}
+
+	public void escribir() {  //metodo
+		Thread escribir_hilo = new Thread(new Runnable() {  //hilo constructor
+			public void run() {                             //metodo  abstracto del hilo
+		try {                                               // excepcion
+			escritor = new PrintWriter(socket.getOutputStream(),true); //enviar mensajes
+			btn_enviar.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {    //metodo
+					// TODO Auto-generated method stub
+				String enviar_mensaje = txt_mensaje.getText();
+			    escritor.println (enviar_mensaje);
+			    txt_mensaje.setText("");
+				
+				}
+				
+				
+				
+			});
+				}catch(Exception ex) {
+					ex.printStackTrace();
+			}
+				
+		}		
+				
+		});
+	escribir_hilo.start();
+	}
+	/**
+	 * ahora en el metodo principal main de esta clase pongo el constructor new un servidor es decir a una instancia aquí para que pueda arrancar
+	 * el constructor y el constructor a su vez contiene un método entonces va arrancar el método también
+	 * 
+	 */
+	public static void main(String[] args) { 
+		// TODO Auto-generated method stub   /
+		new Servidor01();
+	  }
+}
+
+
