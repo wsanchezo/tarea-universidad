@@ -101,7 +101,7 @@ public class Servidor01 {
 						lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));  //objeto con su constructor para leer los mensajes
 						while(true) {                                                                 //ciclo infinito
 							String mensaje_recibido = lector.readLine();
-							area_chat.append("Servidor01 dice:"+mensaje_recibido+"\n");
+							area_chat.append("cliente01 dice:"+mensaje_recibido+"\n");
 						}
 				}catch(Exception ex) {
 					ex.printStackTrace();
