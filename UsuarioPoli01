@@ -99,7 +99,7 @@ public UsuarioPoli01() {
 			try {
 				escritor = new PrintWriter(socket.getOutputStream(),true);
 				btn_enviar.addActionListener(new ActionListener(){
-					@Override
+				    @override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
 					String enviar_mensaje = txt_mensaje.getText();
@@ -123,7 +123,7 @@ public UsuarioPoli01() {
 
 public static void main(String[] args) {
 	// TODO Auto-generated method stub
-	new UsuarioPoli01();
+	new usuario Poli01();
 
 }
 
